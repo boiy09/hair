@@ -12,6 +12,18 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npm run build
+      - name: Create Pages Project (if not exists)
+        run: |
+          RESPONSE=$(curl -s -o /tmp/create_resp.json -w "%{http_code}" \
+            -X POST "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"miyong-chart","production_branch":"main"}')
+          echo "HTTP $RESPONSE"
+          cat /tmp/create_resp.json
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: c7ae330536fcaa2a06c92e4d21d84643
       - name: Deploy to Cloudflare Pages
         run: npx wrangler pages deploy dist --project-name miyong-chart --branch main
         env:
