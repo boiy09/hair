@@ -12,21 +12,8 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npm run build
-      - name: Test Cloudflare Token
-        run: |
-          echo "Testing CF token..."
-          curl -s -o /tmp/cf_test.json -w "%{http_code}" \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            https://api.cloudflare.com/client/v4/user/tokens/verify
-          echo ""
-          cat /tmp/cf_test.json
+      - name: Deploy to Cloudflare Pages
+        run: npx wrangler pages deploy dist --project-name miyong-chart --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: c7ae330536fcaa2a06c92e4d21d84643
-          projectName: miyong-chart
-          directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: c7ae330536fcaa2a06c92e4d21d84643
