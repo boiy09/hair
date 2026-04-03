@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Camera } from 'lucide-react';
+import { X, Camera, Palette } from 'lucide-react';
 import { getMenus, addSale, getCustomerById } from '../store';
 import { today, formatMoney } from '../utils';
 import { useToast } from '../components/Toast';
@@ -14,6 +14,7 @@ export default function SaleForm({ customerId, customerName, onClose, onSave, in
     customerId: customerId || '',
     customerName: customerName || '',
     items: initial?.items || [],
+    coloring: initial?.coloring || '',
     detail: initial?.detail || '',
     chemical: initial?.chemical || '',
     duration: initial?.duration || '',
@@ -125,9 +126,20 @@ export default function SaleForm({ customerId, customerName, onClose, onSave, in
           )}
         </div>
 
+        {/* 넘버링 / 컬러 — 핵심 필드 */}
+        <div className="form-group">
+          <label className="label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Palette size={14} style={{ color: 'var(--on-tertiary-container)' }} />
+            넘버링 / 컬러
+          </label>
+          <input className="input" placeholder="예: 8레벨 애쉬블루, 7N 20vol, 탈색 후 보라"
+            value={form.coloring}
+            onChange={e => setForm(f => ({ ...f, coloring: e.target.value }))} />
+        </div>
+
         <div className="form-group">
           <label className="label">시술 세부 내용</label>
-          <textarea className="input" placeholder="예: 7레벨 애쉬블루, 중간 허리 길이 (최대 300자)"
+          <textarea className="input" placeholder="예: 중간 허리 길이, 뿌리 염색, 끝 탈색 (최대 300자)"
             value={form.detail} maxLength={300} onChange={e => setForm(f => ({ ...f, detail: e.target.value }))} />
         </div>
 
@@ -209,8 +221,7 @@ export default function SaleForm({ customerId, customerName, onClose, onSave, in
           <label style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             minHeight: 48, borderRadius: 'var(--radius-sm)',
-            background: 'var(--surface-low)',
-            border: '1.5px dashed var(--outline)',
+            background: 'var(--surface-low)', border: '1.5px dashed var(--outline)',
             cursor: form.photos.length >= 10 ? 'not-allowed' : 'pointer',
             opacity: form.photos.length >= 10 ? 0.5 : 1,
             color: 'var(--text-secondary)', fontSize: 14,
